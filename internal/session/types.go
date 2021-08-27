@@ -1,10 +1,13 @@
 package session
 
 import (
+	"context"
 	"time"
 
+	"github.com/authelia/authelia/v4/internal/logging"
 	"github.com/fasthttp/session/v2"
 	"github.com/fasthttp/session/v2/providers/redis"
+	"github.com/sirupsen/logrus"
 	"github.com/tstranex/u2f"
 
 	"github.com/authelia/authelia/v4/internal/authentication"
@@ -74,4 +77,16 @@ type OIDCWorkflowSession struct {
 	AuthURI                    string
 	RequiredAuthorizationLevel authorization.Level
 	CreatedTimestamp           int64
+}
+
+func newRedisLogger() *redisLogger {
+	return &redisLogger{logger: logging.Logger()}
+}
+
+type redisLogger struct {
+	logger *logrus.Logger
+}
+
+func (l *redisLogger) Printf(_ context.Context, format string, v ...interface{}) {
+	l.logger.Infof(format, v...)
 }
